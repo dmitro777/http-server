@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-// this line will load mongoose currency into mongoose
+// this line will load mongoose currency type
 require('mongoose-currency').loadType(mongoose);
 const Currency = mongoose.Types.Currency; 
 
@@ -70,10 +70,10 @@ const dishSchema = new Schema(
 
     comments: [ commentSchema ]
 },  
-    { timestamps: true }
+
+{ timestamps: true }
 
 );
 
 var Dishes = mongoose.model('Dish', dishSchema);
-
 module.exports = Dishes;

@@ -1,16 +1,16 @@
 const express = require('express');
 const dishRouter = express.Router();
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const Dishes = require('../models/dishes');
 // bodyParser.json() depricated, using expess.json()
 dishRouter.use(express.json());
 /**
- * For all Dishes - Iplementing HTTP communication protocol methods using express
+ * For all Dishes
  */
 dishRouter.route('/')
 
 .get((req, res, next) => {
-    // find() is provided by mongoose
+    // find() provided by mongoose
     Dishes.find({})
     .then((dishes) => {
 
@@ -22,7 +22,7 @@ dishRouter.route('/')
 })
 
 .post((req, res, next) => {
-    // create() is provided by mongoose
+    // create() provided by mongoose
     Dishes.create(req.body)
     .then((dish) => {
 
@@ -41,7 +41,7 @@ dishRouter.route('/')
 })
 
 .delete((req, res, next) => {
-
+    // remove() provided by mongoose
     Dishes.remove({})
     .then((resp) => {
 
@@ -52,12 +52,12 @@ dishRouter.route('/')
     .catch((err) => next(err));
 });
 /**
- * For all Dish Id's - Iplementing HTTP communication protocol methods using express
+ * For all Dish Id's
  */
 dishRouter.route('/:dishId')
 
 .get((req, res, next) => {
-
+    // findById() provided by mongoose
     Dishes.findById(req.params.dishId)
     .then((dish) => {
 
@@ -76,7 +76,7 @@ dishRouter.route('/:dishId')
 })
 
 .put((req, res, next) => {
-
+    // findByIdAndUpdate() provided by mongoose
     Dishes.findByIdAndUpdate(req.params.dishId, {
         $set: req.body 
     }, {new: true})
@@ -90,7 +90,7 @@ dishRouter.route('/:dishId')
 })
 
 .delete((req, res, next) => {
-
+    // findByIdAndRemove() provided by mongoose
     Dishes.findByIdAndRemove(req.params.dishId)
     .then((resp) => {
 
@@ -101,12 +101,12 @@ dishRouter.route('/:dishId')
     .catch((err) => next(err));
 });
 /**
- * For all Dishes - Iplementing HTTP communication protocol methods using express
+ * For all Comments
  */
  dishRouter.route('/:dishId/comments')
 
  .get((req, res, next) => {
-     // find() is provided by mongoose
+     // find() provided by mongoose
      Dishes.findById(req.params.dishId)
      .then((dish) => {
 
@@ -126,12 +126,12 @@ dishRouter.route('/:dishId')
  })
  
  .post((req, res, next) => {
-     // create() is provided by mongoose
+     // findById() provided by mongoose
      Dishes.findById(req.params.dishId)
      .then((dish) => {
 
         if (dish != null) {
-            // function push() depricated, use instead addToSet() to add a sub-document
+            // function push() depricated, using instead addToSet() to add a sub-document
             dish.comments.addToSet(req.body);
             dish.save()
             .then((dish) => {
@@ -158,7 +158,7 @@ dishRouter.route('/:dishId')
  })
  
  .delete((req, res, next) => {
- 
+    // findById() provided by mongoose
     Dishes.findById(req.params.dishId)
     .then((dish) => {
 
@@ -183,12 +183,12 @@ dishRouter.route('/:dishId')
      .catch((err) => next(err));
  });
  /**
-  * For all Dish Id's - Iplementing HTTP communication protocol methods using express
+  * For all Comments Id's
   */
  dishRouter.route('/:dishId/comments/:commentId')
  
  .get((req, res, next) => {
- 
+    // findById() provided by mongoose
      Dishes.findById(req.params.dishId)
      .then((dish) => {
         if (dish != null && dish.comments.id(req.params.commentId) != null) {
@@ -219,7 +219,7 @@ dishRouter.route('/:dishId')
  })
  
  .put((req, res, next) => {
- 
+    // findById() provided by mongoose
     Dishes.findById(req.params.dishId)
     .then((dish) => {
        if (dish != null && dish.comments.id(req.params.commentId) != null) {
@@ -257,7 +257,7 @@ dishRouter.route('/:dishId')
  })
  
  .delete((req, res, next) => {
- 
+    // findById() provided by mongoose
     Dishes.findById(req.params.dishId)
     .then((dish) => {
 
