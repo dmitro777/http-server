@@ -1,3 +1,6 @@
+/**
+ * Promotions Model Schema
+ */
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 // this line will load mongoose currency type
@@ -38,6 +41,7 @@ const promoSchema = new Schema({
         default: true
     }
 }, 
+
 { timestamps: true }
 
 );

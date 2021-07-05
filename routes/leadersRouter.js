@@ -1,9 +1,12 @@
+/**
+ * Leaders Router
+ */
 const express = require('express');
 const leadersRouter = express.Router();
 const Leaders = require('../models/leaders');
 leadersRouter.use(express.json());
 /**
- * For all Leaders
+ * GET all Leaders
  */
  leadersRouter.route('/')
 

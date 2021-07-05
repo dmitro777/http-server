@@ -1,3 +1,6 @@
+/**
+ * Dish Router
+ */
 const express = require('express');
 const dishRouter = express.Router();
 // const mongoose = require('mongoose');
@@ -5,7 +8,7 @@ const Dishes = require('../models/dishes');
 // bodyParser.json() depricated, using expess.json()
 dishRouter.use(express.json());
 /**
- * For all Dishes
+ * GET all Dishes
  */
 dishRouter.route('/')
 

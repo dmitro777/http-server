@@ -1,3 +1,6 @@
+/**
+ * Dish Model Schema
+ */
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 // this line will load mongoose currency type

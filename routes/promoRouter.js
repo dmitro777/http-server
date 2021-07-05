@@ -1,10 +1,13 @@
+/**
+ * Promotions Router
+ */
 const express = require('express');
 const promoRouter = express.Router();
 const Promotions = require('../models/promotions');
 // bodyParser.json() depricated, using expess.json()
 promoRouter.use(express.json());
 /**
- * For all Promotions
+ * GET all Promotions
  */
 promoRouter.route('/')
 
