@@ -4,6 +4,7 @@
 const express = require('express');
 const leadersRouter = express.Router();
 const Leaders = require('../models/leaders');
+const authenticate = require('../authenticate');
 leadersRouter.use(express.json());
 /**
  * GET all Leaders
@@ -22,7 +23,8 @@ leadersRouter.use(express.json());
     .catch((err) => next(err));
 })
 
-.post((req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin, 
+    (req, res, next) => {
     // create() provided by mongoose
     Leaders.create(req.body)
     .then((leader) => {
@@ -41,7 +43,8 @@ leadersRouter.use(express.json());
     res.end('PUT operation not suported on /leaders');
 })
 
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, 
+    (req, res, next) => {
     // remove() provided by mongoose
     Leaders.remove({})
     .then((resp) => {
@@ -76,7 +79,8 @@ leadersRouter.use(express.json());
     + req.params.leaderId);
  })
  
- .put((req, res, next) => {
+ .put(authenticate.verifyUser, authenticate.verifyAdmin, 
+    (req, res, next) => {
     // findByIdAndUpdate() provided by mongoose
     Leaders.findByIdAndUpdate(req.params.leaderId, {
         $set: req.body 
@@ -90,7 +94,8 @@ leadersRouter.use(express.json());
     .catch((err) => next(err));
 })
 
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, 
+    (req, res, next) => {
     // findByIdAndRemove() provided by mongoose
     Leaders.findByIdAndRemove(req.params.leaderId)
     .then((resp) => {

@@ -4,7 +4,7 @@
 const express = require('express');
 const promoRouter = express.Router();
 const Promotions = require('../models/promotions');
-// bodyParser.json() depricated, using expess.json()
+const authenticate = require('../authenticate');
 promoRouter.use(express.json());
 /**
  * GET all Promotions
@@ -23,7 +23,8 @@ promoRouter.route('/')
     .catch((err) => next(err));
 })
 
-.post((req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin, 
+    (req, res, next) => {
     // create() provided by mongoose
     Promotions.create(req.body)
     .then((promotion) => {
@@ -42,7 +43,8 @@ promoRouter.route('/')
     res.end('PUT operation not suported on /promotions');
 })
 
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, 
+    (req, res, next) => {
     // remove() provided by mongoose
     Promotions.remove({})
     .then((resp) => {
@@ -77,7 +79,8 @@ promoRouter.route('/')
     + req.params.promoId);
  })
  
- .put((req, res, next) => {
+ .put(authenticate.verifyUser, authenticate.verifyAdmin, 
+    (req, res, next) => {
     // findByIdAndUpdate() provided by mongoose
     Promotions.findByIdAndUpdate(req.params.promoId, {
         $set: req.body 
@@ -91,7 +94,8 @@ promoRouter.route('/')
     .catch((err) => next(err));
  })
  
- .delete((req, res, next) => {
+ .delete(authenticate.verifyUser, authenticate.verifyAdmin, 
+    (req, res, next) => {
     // findByIdAndRemove() provided by mongoose
     Promotions.findByIdAndRemove(req.params.promoId)
     .then((resp) => {

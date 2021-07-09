@@ -7,27 +7,40 @@ var path = require('path');
 //var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
-var FileStore = require('session-file-store')(session);
+//var FileStore = require('session-file-store')(session);
 var passport = require('passport');
-var authenticate = require('./authenticate');
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/users');
 var dishRouter = require('./routes/dishRouter');
 var promoRouter = require('./routes/promoRouter');
 var leadersRouter = require('./routes/leadersRouter');
-
+var config = require('./config');
 const mongoose = require('mongoose');
-// const Dishes =  require('./models/dishes'); -> Antique
-const url = 'mongodb://localhost:27017/conFusion';
+
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 // connecting to conFusion DB
 connect.then( (db) => 
     {console.log('Connected correctly to server!')}, 
-    (err) => {console.log(err)}
-);
+    (err) => {console.log(err)});
+
 // express engine is ON
 var app = express();
+
+/**
+ * Redirecting All network traffic to secure port(HTTPS)
+ */
+app.all('*', (req, res, next) => {
+
+    if (req.secure) {
+        next();
+    }
+    else {
+        res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
+    }
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -35,38 +48,11 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser('32698-85637-02706-52391')); -> Antique
-app.use(session({
-    name: 'session-id',
-    secret: '32698-55874-02706-52391',
-    saveUninitialized: false,
-    resave: false,
-    store: new FileStore()
-}));
-
 app.use(passport.initialize());
-app.use(passport.session());
-
 app.use('/', indexRouter);
 app.use('/users', userRouter);
 
-// user authentication
-function auth (req, res, next) {
-    console.log(req.user);
-
-    if (!req.user) {
-        var err = new Error('You are not authenticated!');
-        err.status = 403;
-        return next(err);
-    }
-    else {
-        next();
-    }
-}
-
-app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/dishes', dishRouter);
 app.use('/leaders', leadersRouter);
 app.use('/promotions', promoRouter);
