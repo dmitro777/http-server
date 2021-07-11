@@ -1,21 +1,20 @@
 /**
  * Middleware setup
  */
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-//var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var session = require('express-session');
-//var FileStore = require('session-file-store')(session);
-var passport = require('passport');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const session = require('express-session');
+const passport = require('passport');
 
-var indexRouter = require('./routes/index');
-var userRouter = require('./routes/users');
-var dishRouter = require('./routes/dishRouter');
-var promoRouter = require('./routes/promoRouter');
-var leadersRouter = require('./routes/leadersRouter');
-var config = require('./config');
+const indexRouter = require('./routes/index');
+const userRouter = require('./routes/users');
+const dishRouter = require('./routes/dishRouter');
+const promoRouter = require('./routes/promoRouter');
+const leadersRouter = require('./routes/leadersRouter');
+const uploadRouter = require('./routes/uploadRouter');
+const config = require('./config');
 const mongoose = require('mongoose');
 
 const url = config.mongoUrl;
@@ -26,7 +25,7 @@ connect.then( (db) =>
     (err) => {console.log(err)});
 
 // express engine is ON
-var app = express();
+const app = express();
 
 /**
  * Redirecting All network traffic to secure port(HTTPS)
@@ -49,13 +48,19 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
+/**
+ * Configuring directories
+ */
 app.use('/', indexRouter);
 app.use('/users', userRouter);
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/dishes', dishRouter);
 app.use('/leaders', leadersRouter);
 app.use('/promotions', promoRouter);
+app.use('/imageUpload', uploadRouter);
+/**
+ * Handling Errors
+ */
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

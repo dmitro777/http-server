@@ -4,6 +4,7 @@
 const express = require('express');
 const dishRouter = express.Router();
 // const mongoose = require('mongoose');
+const cors = require('./cors');
 const authenticate = require('../authenticate');
 const Dishes = require('../models/dishes');
 dishRouter.use(express.json());
@@ -12,7 +13,11 @@ dishRouter.use(express.json());
  */
 dishRouter.route('/')
 
-.get((req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+})
+
+.get(cors.cors, (req, res, next) => {
     // find() provided by mongoose
     Dishes.find({})
     .then((dishes) => {
@@ -24,7 +29,7 @@ dishRouter.route('/')
     .catch((err) => next(err));
 })
 
-.post(authenticate.verifyUser, authenticate.verifyAdmin, 
+.post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, 
     (req, res, next) => {
     
         // create() provided by mongoose
@@ -39,13 +44,13 @@ dishRouter.route('/')
     .catch((err) => next(err));    
 })
 
-.put((req, res, next) => {
+.put(cors.corsWithOptions, (req, res, next) => {
 
     res.statusCode = 403; // operation not suported
     res.end('PUT operation not suported on /dishes');
 })
 
-.delete(authenticate.verifyUser, authenticate.verifyAdmin, 
+.delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, 
     (req, res, next) => {
     // remove() provided by mongoose
     Dishes.remove({})
@@ -62,7 +67,11 @@ dishRouter.route('/')
  */
 dishRouter.route('/:dishId')
 
-.get((req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+})
+
+.get(cors.cors, (req, res, next) => {
     // findById() provided by mongoose
     Dishes.findById(req.params.dishId)
     .populate('comments.author')
@@ -75,14 +84,14 @@ dishRouter.route('/:dishId')
     .catch((err) => next(err));
 })
 
-.post((req, res, next) => {
+.post(cors.corsWithOptions, (req, res, next) => {
 
     res.statusCode = 403; // operation not suported
     res.end('POST operation not suported on /dishes/' 
     + req.params.dishId);
 })
 
-.put(authenticate.verifyUser, authenticate.verifyAdmin, 
+.put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, 
     (req, res, next) => {
     // findByIdAndUpdate() provided by mongoose
     Dishes.findByIdAndUpdate(req.params.dishId, {
@@ -97,7 +106,7 @@ dishRouter.route('/:dishId')
     .catch((err) => next(err));
 })
 
-.delete(authenticate.verifyUser, authenticate.verifyAdmin, 
+.delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, 
     (req, res, next) => {
     // findByIdAndRemove() provided by mongoose
     Dishes.findByIdAndRemove(req.params.dishId)
@@ -114,7 +123,11 @@ dishRouter.route('/:dishId')
  */
 dishRouter.route('/:dishId/comments')
 
-.get((req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+})
+
+.get(cors.cors, (req, res, next) => {
 // find() provided by mongoose
 Dishes.findById(req.params.dishId)
 .populate('comments.author') 
@@ -135,7 +148,7 @@ Dishes.findById(req.params.dishId)
 .catch((err) => next(err));
 })
 
-.post(authenticate.verifyUser, (req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
 .then((dish) => {
@@ -169,14 +182,14 @@ Dishes.findById(req.params.dishId)
 .catch((err) => next(err));
 })
 
-.put((req, res, next) => {
+.put(cors.corsWithOptions, (req, res, next) => {
 
 res.statusCode = 403; // operation not suported
 res.end('PUT operation not suported on /dishes/' 
 + req.params.dishId + '/comments');
 })
 
-.delete(authenticate.verifyUser, authenticate.verifyAdmin,
+.delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin,
     (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
@@ -210,7 +223,11 @@ Dishes.findById(req.params.dishId)
  */
 dishRouter.route('/:dishId/comments/:commentId')
 
-.get((req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+})
+
+.get(cors.cors, (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
 .populate('comments.author')
@@ -235,14 +252,14 @@ Dishes.findById(req.params.dishId)
 .catch((err) => next(err));
 })
 
-.post(authenticate.verifyUser, (req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
 
     res.statusCode = 403; // operation not suported
     res.end('POST operation not suported on /dishes/' 
     + req.params.dishId + '/comments/' + req.params.commentId);
 })
 
-.put(authenticate.verifyUser, (req, res, next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
 .then((dish) => {
@@ -293,7 +310,7 @@ Dishes.findById(req.params.dishId)
 .catch((err) => next(err));
 })
 
-.delete(authenticate.verifyUser, (req, res, next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
 .then((dish) => {

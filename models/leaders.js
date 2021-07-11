@@ -42,5 +42,5 @@ const leaderSchema = new Schema({
 
 );
 
-var Leadrs = mongoose.model('Leader', leaderSchema);
+const Leadrs = mongoose.model('Leader', leaderSchema);
 module.exports = Leadrs;

@@ -3,6 +3,7 @@
  */
 const express = require('express');
 const promoRouter = express.Router();
+const cors = require('./cors');
 const Promotions = require('../models/promotions');
 const authenticate = require('../authenticate');
 promoRouter.use(express.json());
@@ -11,7 +12,11 @@ promoRouter.use(express.json());
  */
 promoRouter.route('/')
 
-.get((req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+})
+
+.get(cors.cors, (req, res, next) => {
     // find() provided by mongoose
     Promotions.find({})
     .then((promotions) => {
@@ -23,7 +28,8 @@ promoRouter.route('/')
     .catch((err) => next(err));
 })
 
-.post(authenticate.verifyUser, authenticate.verifyAdmin, 
+.post(cors.corsWithOptions, authenticate.verifyUser, 
+    authenticate.verifyAdmin, 
     (req, res, next) => {
     // create() provided by mongoose
     Promotions.create(req.body)
@@ -37,13 +43,14 @@ promoRouter.route('/')
     .catch((err) => next(err));
 })
 
-.put((req, res, next) => {
+.put(cors.corsWithOptions, (req, res, next) => {
 
     res.statusCode = 403; // operation not suported
     res.end('PUT operation not suported on /promotions');
 })
 
-.delete(authenticate.verifyUser, authenticate.verifyAdmin, 
+.delete(cors.corsWithOptions, authenticate.verifyUser, 
+    authenticate.verifyAdmin, 
     (req, res, next) => {
     // remove() provided by mongoose
     Promotions.remove({})
@@ -58,9 +65,13 @@ promoRouter.route('/')
 /**
  * For all Promotion Id's
  */
- promoRouter.route('/:promoId')
+promoRouter.route('/:promoId')
+
+.options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+})
  
- .get((req, res, next) => {
+ .get(cors.cors, (req, res, next) => {
     // findById() provided by mongoose
     Promotions.findById(req.params.promoId)
     .then((promotion) => {
@@ -72,14 +83,15 @@ promoRouter.route('/')
     .catch((err) => next(err));
  })
  
- .post((req, res, next) => {
+ .post(cors.corsWithOptions, (req, res, next) => {
  
     res.statusCode = 403; // operation not suported
     res.end('POST operation not suported on /promotions ' 
     + req.params.promoId);
  })
  
- .put(authenticate.verifyUser, authenticate.verifyAdmin, 
+ .put(cors.corsWithOptions, authenticate.verifyUser, 
+    authenticate.verifyAdmin, 
     (req, res, next) => {
     // findByIdAndUpdate() provided by mongoose
     Promotions.findByIdAndUpdate(req.params.promoId, {
@@ -94,7 +106,8 @@ promoRouter.route('/')
     .catch((err) => next(err));
  })
  
- .delete(authenticate.verifyUser, authenticate.verifyAdmin, 
+ .delete(cors.corsWithOptions, authenticate.verifyUser, 
+    authenticate.verifyAdmin, 
     (req, res, next) => {
     // findByIdAndRemove() provided by mongoose
     Promotions.findByIdAndRemove(req.params.promoId)

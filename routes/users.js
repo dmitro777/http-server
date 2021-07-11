@@ -1,18 +1,19 @@
 /**
  * Users Router
  */
-var express = require('express');
-var userRouter = express.Router();
-var User = require('../models/user');
-var passport = require('passport');
-var authenticate = require('../authenticate');
+const express = require('express');
+const passport = require('passport');
+const userRouter = express.Router();
+const cors = require('./cors');
+const User = require('../models/user');
+const authenticate = require('../authenticate');
 
 userRouter.use(express.json());
 /**
  * User athentication
  **/
-userRouter.route('/')
-.get(authenticate.verifyUser, authenticate.verifyAdmin, 
+userRouter.get('/', cors.corsWithOptions, authenticate.verifyUser, 
+    authenticate.verifyAdmin, 
     (req, res, next) => {
         // find() provided by mongoose
         User.find({})
@@ -25,7 +26,7 @@ userRouter.route('/')
         .catch((err) => next(err));
 });
 
-userRouter.post('/signup', (req, res, next) => {
+userRouter.post('/signup', cors.corsWithOptions, (req, res, next) => {
 
     User.register(new User({username: req.body.username}), 
         req.body.password, (err, user) => {
@@ -57,7 +58,7 @@ userRouter.post('/signup', (req, res, next) => {
     });
   });
 
-userRouter.post('/login', passport.authenticate('local'), 
+userRouter.post('/login', cors.corsWithOptions, passport.authenticate('local'), 
 (req, res) => {
 
     var token = authenticate.getToken({_id: req.user._id});
@@ -66,14 +67,13 @@ userRouter.post('/login', passport.authenticate('local'),
     res.json({success: true, token: token, status: 'You are successfully logged in!'});
 });
 
-userRouter.get('/signout', (req, res, next) => {
+userRouter.get('/signout', cors.corsWithOptions, (req, res, next) => {
 
     if (req.session) {
         req.session.destroy();
         res.clearCookie('session-id');
         res.redirect('/');
     }
-
     else {
         var err = new Error('You are not logged in.');
         err.status = 403; // forbidden
