@@ -33,7 +33,7 @@ const uploadRouter = express.Router();
 
 uploadRouter.use(express.json());
 /**
- * GET all Dishes
+ * Operations on file upload
  */
 uploadRouter.route('/')
 

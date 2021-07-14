@@ -43,7 +43,7 @@ leadersRouter.route('/')
     .catch((err) => next(err));
 })
 
-.put(cors.corsWithOptions, (req, res, next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
 
     res.statusCode = 403; // operation not suported
     res.end('PUT operation not suported on /leaders');
@@ -83,7 +83,7 @@ leadersRouter.route('/')
     .catch((err) => next(err));
 })
  
-.post(cors.corsWithOptions, (req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
  
     res.statusCode = 403; // operation not suported
     res.end('POST operation not suported on /leaders/' 

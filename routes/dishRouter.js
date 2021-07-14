@@ -3,7 +3,6 @@
  */
 const express = require('express');
 const dishRouter = express.Router();
-// const mongoose = require('mongoose');
 const cors = require('./cors');
 const authenticate = require('../authenticate');
 const Dishes = require('../models/dishes');
@@ -44,7 +43,7 @@ dishRouter.route('/')
     .catch((err) => next(err));    
 })
 
-.put(cors.corsWithOptions, (req, res, next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
 
     res.statusCode = 403; // operation not suported
     res.end('PUT operation not suported on /dishes');
@@ -84,15 +83,15 @@ dishRouter.route('/:dishId')
     .catch((err) => next(err));
 })
 
-.post(cors.corsWithOptions, (req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
 
     res.statusCode = 403; // operation not suported
     res.end('POST operation not suported on /dishes/' 
     + req.params.dishId);
 })
 
-.put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, 
-    (req, res, next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, 
+    authenticate.verifyAdmin, (req, res, next) => {
     // findByIdAndUpdate() provided by mongoose
     Dishes.findByIdAndUpdate(req.params.dishId, {
         $set: req.body 
@@ -106,8 +105,8 @@ dishRouter.route('/:dishId')
     .catch((err) => next(err));
 })
 
-.delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, 
-    (req, res, next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, 
+    authenticate.verifyAdmin, (req, res, next) => {
     // findByIdAndRemove() provided by mongoose
     Dishes.findByIdAndRemove(req.params.dishId)
     .then((resp) => {
@@ -148,15 +147,15 @@ Dishes.findById(req.params.dishId)
 .catch((err) => next(err));
 })
 
-.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, 
+    (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
 .then((dish) => {
 
     if (dish != null) {
 
-        req.body.author = req.user._id;
-        // function push() depricated, using instead addToSet() to add a sub-document
+        req.body.author = req.user._id; 
         dish.comments.addToSet(req.body);
         dish.save()
         .then((dish) => {
@@ -182,15 +181,15 @@ Dishes.findById(req.params.dishId)
 .catch((err) => next(err));
 })
 
-.put(cors.corsWithOptions, (req, res, next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
 
 res.statusCode = 403; // operation not suported
 res.end('PUT operation not suported on /dishes/' 
 + req.params.dishId + '/comments');
 })
 
-.delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin,
-    (req, res, next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, 
+    authenticate.verifyAdmin, (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
 .then((dish) => {
@@ -252,14 +251,16 @@ Dishes.findById(req.params.dishId)
 .catch((err) => next(err));
 })
 
-.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, 
+    (req, res, next) => {
 
     res.statusCode = 403; // operation not suported
     res.end('POST operation not suported on /dishes/' 
     + req.params.dishId + '/comments/' + req.params.commentId);
 })
 
-.put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, 
+    (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
 .then((dish) => {
@@ -310,7 +311,8 @@ Dishes.findById(req.params.dishId)
 .catch((err) => next(err));
 })
 
-.delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, 
+    (req, res, next) => {
 // findById() provided by mongoose
 Dishes.findById(req.params.dishId)
 .then((dish) => {
@@ -329,7 +331,7 @@ Dishes.findById(req.params.dishId)
                     res.setHeader('Content-Type', 'application/json');
                     res.json(dish.comments);
                 })
-            }, (err) => next(err));
+            }, (err) => next(err))
         }
         else {
             err = new Error('You are not authorized to delete this comment.');

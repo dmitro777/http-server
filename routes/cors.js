@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors'); // Cross-origin resource sharing
-const app = express();
-
+/**
+ * Cross-origin resource sharing
+ */
+const cors = require('cors');
 const whiteList = ['http://localhost:3000', 'https://localhost:3443'];
 
 const corsOptionsDelegate = (req, callback) => {
